@@ -81,17 +81,15 @@ def delete_user(username: str):
 @cli.command()
 def emailorusername(username:str,email:str):
     with get_session() as db: # Get a connection to the database
-        user = db.exec(select(User).where(User.username == username)).first() 
-        user1 = db.exec(select(User).where(User.email == email)).first()
+        #user = db.exec(select(User).where(User.username == user)).first() 
         all_users = db.exec(select(User)).all()
-        for user in all_users:
-            if(user==user1):
-       # if not user or not user1:
-        #    print('The user was not found!')
-        #    return
-                print(user)
-        else:
-           print('The user was not found!')
+        found=False
+        for users in all_users:
+            if (users.username==username or users.email==email):
+                print(users)
+                found=True
+        if (found==False):
+            print('The user was not found!')
            
 if __name__ == "__main__":
     cli()
