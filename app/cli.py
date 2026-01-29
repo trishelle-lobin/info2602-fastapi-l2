@@ -90,6 +90,20 @@ def emailorusername(username:str,email:str):
                 found=True
         if (found==False):
             print('The user was not found!')
-           
+
+
+@cli.command()
+def get_user(limit=10,offset=0):
+    # The code for task 5.1 goes here. Once implemented, remove the line below that says "pass"
+      with get_session() as db: # Get a connection to the database
+        all_users = db.exec(select(User)).all()
+        count=-1
+        for users in all_users:
+            count+=1
+            if count>=offset and count<limit+offset:
+                print(users)            
+            if count==limit+offset:
+                break
+            
 if __name__ == "__main__":
     cli()
