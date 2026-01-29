@@ -19,9 +19,12 @@ def initialize():
         print("Database Initialized")
 
 @cli.command()
-def get_user(username:str):
-    # The code for task 5.1 goes here. Once implemented, remove the line below that says "pass"
-      with get_session() as db: # Get a connection to the database
+def get_user(username:str= typer.Argument(...,help="The username of the user to be printed")):
+    """
+    Retrieves a user by their username and prints the username.
+    If a username is not found an error message is outputted.
+    """
+    with get_session() as db: # Get a connection to the database
         user = db.exec(select(User).where(User.username == username)).first()
         if not user:
             print(f'{username} not found!')
@@ -41,7 +44,12 @@ def get_all_users():
 
 
 @cli.command()
-def change_email(username: str, new_email:str):
+def change_email(username: str= typer.Argument(...,help="The username of the user to be printed"), 
+                 new_email:str=typer.Argument(...,help="The email of the user to be changed/altered")):
+    """
+    Retrieves a user by their username and updates thedir email.
+    If a username is not found an error message is outputted.
+    """
     with get_session() as db: # Get a connection to the database
         user = db.exec(select(User).where(User.username == username)).first()
         if not user:
@@ -53,8 +61,15 @@ def change_email(username: str, new_email:str):
         print(f"Updated {user.username}'s email to {user.email}")
 
 @cli.command()
-def create_user(username: str, email:str, password: str):
+def create_user(username: str=typer.Argument(...,help="The username of the user to be created"), 
+                email:str=typer.Argument(...,help="The email of the user to be created"), 
+                password: str=typer.Argument(...,help="The password of the user to be created")):
+     """
+     Retrieves a user by their username,email and password and creates a new user.
+     If a username is already taken an error message is outputted.
+     """
      with get_session() as db: # Get a connection to the database
+
         newuser = User(username, email, password)
         try:
             db.add(newuser)
@@ -67,7 +82,11 @@ def create_user(username: str, email:str, password: str):
             print(newuser) # print the newly created user
 
 @cli.command()
-def delete_user(username: str):
+def delete_user(username: str=typer.Argument(...,help="The username of the user to be deleted")):
+     """
+    Retrieves a user by their username and deletes the user.
+    If a username is not found an error message is outputted.
+    """
      with get_session() as db:
         user = db.exec(select(User).where(User.username == username)).first()
         if not user:
@@ -79,9 +98,13 @@ def delete_user(username: str):
 #render
 
 @cli.command()
-def emailorusername(username:str,email:str):
+def emailorusername(username:str=typer.Argument(...,help="The username of the user to be printed"),email:str=typer.Argument(...,help="The email of the user to be printed")):
     with get_session() as db: # Get a connection to the database
         #user = db.exec(select(User).where(User.username == user)).first() 
+        """
+        Retrieves a user by their username or email and prints the user.
+        If a username or email is not found an error message is outputted.
+        """
         all_users = db.exec(select(User)).all()
         found=False
         for users in all_users:
@@ -93,7 +116,12 @@ def emailorusername(username:str,email:str):
 
 
 @cli.command()
-def get_user(limit=10,offset=0):
+def get_users(limit:int=typer.Argument(10, help="List the first N users of the database to be used by a paginated table"),
+              offset:int=typer.Argument(0, help="Set to 0")):
+      """
+    List the first N users of the database to be used by a paginated table.
+    The loop ends when the counter has reached the limit
+    """
     # The code for task 5.1 goes here. Once implemented, remove the line below that says "pass"
       with get_session() as db: # Get a connection to the database
         all_users = db.exec(select(User)).all()
