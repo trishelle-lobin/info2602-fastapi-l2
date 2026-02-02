@@ -70,7 +70,7 @@ def create_user(username: str=typer.Argument(...,help="The username of the user 
      """
      with get_session() as db: # Get a connection to the database
 
-        newuser = User(username, email, password)
+        newuser = User(username=username, email=email, password=password)
         try:
             db.add(newuser)
             db.commit()
@@ -98,7 +98,7 @@ def delete_user(username: str=typer.Argument(...,help="The username of the user 
 #render
 
 @cli.command()
-def emailorusername(username:str=typer.Argument(...,help="The username of the user to be printed"),email:str=typer.Argument(...,help="The email of the user to be printed")):
+def emailorusername(username:str=typer.Argument(...,help="The username of the user to be printed")):
     with get_session() as db: # Get a connection to the database
         #user = db.exec(select(User).where(User.username == user)).first() 
         """
@@ -108,7 +108,7 @@ def emailorusername(username:str=typer.Argument(...,help="The username of the us
         all_users = db.exec(select(User)).all()
         found=False
         for users in all_users:
-            if (users.username==username or users.email==email):
+            if (username in users.username or username in users.email):
                 print(users)
                 found=True
         if (found==False):
