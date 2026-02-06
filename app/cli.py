@@ -9,6 +9,9 @@ cli = typer.Typer()
 
 @cli.command()
 def initialize():
+    """
+    Delete all tables, create all tables,create a new user BOB
+    """
     with get_session() as db: # Get a connection to the database
         drop_all() # delete all tables
         create_db_and_tables() #recreate all tables
@@ -33,6 +36,10 @@ def get_user(username:str= typer.Argument(...,help="The username of the user to 
 
 @cli.command()
 def get_all_users():
+      """
+      Retrieves and prints all users found 
+      If users were not found, an error message is printed
+      """
     # The code for task 5.2 goes here. Once implemented, remove the line below that says "pass"
       with get_session() as db:
         all_users = db.exec(select(User)).all()
@@ -44,10 +51,10 @@ def get_all_users():
 
 
 @cli.command()
-def change_email(username: str= typer.Argument(...,help="The username of the user to be printed"), 
+def change_email(username: str= typer.Argument(...,help="The username of the user who has to update their email"), 
                  new_email:str=typer.Argument(...,help="The email of the user to be changed/altered")):
     """
-    Retrieves a user by their username and updates thedir email.
+    Retrieves a user by their username and updates their email.
     If a username is not found an error message is outputted.
     """
     with get_session() as db: # Get a connection to the database
@@ -65,7 +72,7 @@ def create_user(username: str=typer.Argument(...,help="The username of the user 
                 email:str=typer.Argument(...,help="The email of the user to be created"), 
                 password: str=typer.Argument(...,help="The password of the user to be created")):
      """
-     Retrieves a user by their username,email and password and creates a new user.
+     Creates a username,email and password for a new user.
      If a username is already taken an error message is outputted.
      """
      with get_session() as db: # Get a connection to the database
@@ -98,11 +105,10 @@ def delete_user(username: str=typer.Argument(...,help="The username of the user 
 #render
 
 @cli.command()
-def emailorusername(username:str=typer.Argument(...,help="The username of the user to be printed")):
-    with get_session() as db: # Get a connection to the database
-        #user = db.exec(select(User).where(User.username == user)).first() 
+def emailorusername(username:str=typer.Argument(...,help="The username to be searched for in a partial search")):
+    with get_session() as db: # Get a connection to the database 
         """
-        Retrieves a user by their username or email and prints the user.
+        Retrieves a user by a partial search of their username or email and prints the user.
         If a username or email is not found an error message is outputted.
         """
         all_users = db.exec(select(User)).all()
@@ -116,13 +122,13 @@ def emailorusername(username:str=typer.Argument(...,help="The username of the us
 
 
 @cli.command()
-def get_users(limit:int=typer.Argument(10, help="List the first N users of the database to be used by a paginated table"),
-              offset:int=typer.Argument(0, help="Set to 0")):
+def get_users_count(limit:int=typer.Argument(10, help="The first 10 users of the database to be printed"),
+              offset:int=typer.Argument(0, help="Number of users to be skipped from the beginning")):
       """
     List the first N users of the database to be used by a paginated table.
     The loop ends when the counter has reached the limit
     """
-    # The code for task 5.1 goes here. Once implemented, remove the line below that says "pass"
+   
       with get_session() as db: # Get a connection to the database
         all_users = db.exec(select(User)).all()
         count=-1
